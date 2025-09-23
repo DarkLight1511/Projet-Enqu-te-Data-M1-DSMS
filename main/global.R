@@ -20,13 +20,11 @@ library(plotly)
 ################################ IMPORTATION ###################################
 
 data_enquete <- read_csv2("data/enquete_data_raw.csv")
-
 ################################  FONCTIONS  ###################################
 #%>%
-data_enquete_filtree  <-  filter(data_enquete, A2_statut == "En recherche d'emploi") 
-  
+data_enquete_filtree  <-  filter(data_enquete, A4_secteur != "Autre") 
 
-#unique(data_enquete_filtree$A2_statut)
+unique(data_enquete_filtree$A4_secteur)
 
 A4 <- unique(data_enquete$A4_secteur)
 A4
