@@ -1,0 +1,48 @@
+# Define UI for application
+fluidPage(
+  theme = shinytheme("darkly"),
+  themeSelector(),
+  
+  # Insertion d'image
+  img(src = "Résultats-denquête.png",
+      height = "100x"),
+  
+  # Application title
+  titlePanel(""),
+  
+  # Page n°1
+  navbarPage(
+    "Questions",
+    
+    tabPanel("A4 - Secteurs d'activité",
+             
+             # Sidebar with a slider input for number of bins
+             sidebarLayout(
+               sidebarPanel(
+                 #selectInput("")
+                 #sliderInput("")
+                 #actionButton("")
+                 #checkboxInput("")
+                 #radioButtons("")
+                 #dateInput("")
+                 #dateRangeInput("")
+                 #fileInput("")
+                 #downloadButton("")
+                 #actionButton("")
+                 #tabsetPanel("")
+                 #navbarpage("", tabPanel(...), tabPanel(...))
+               ),
+               
+               mainPanel(tabsetPanel(
+                 tabPanel("Graphique", plotOutput("plot_evolution")),
+                 tabPanel("Tableau", tableOutput("table_evolution"))
+               ))
+             )),
+    
+    tabPanel("A5", "C'est moi qui ai fait ça!!"),
+    
+    tabPanel("A6", "C'est moi qui ai fait ça!!"),
+    
+    tabPanel("B2", "C'est moi qui ai fait ça!!")
+  )
+)
