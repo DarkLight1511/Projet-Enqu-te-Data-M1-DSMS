@@ -26,7 +26,7 @@ data_enquete <- read_csv2("data/enquete_data_raw.csv")
 data_enquete_filtree  <-  filter(data_enquete, A2_statut == "En recherche d'emploi") 
   
 
-unique(data_enquete_filtree$A2_statut)
+#unique(data_enquete_filtree$A2_statut)
 
 A4 <- unique(data_enquete$A4_secteur)
 A4

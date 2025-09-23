@@ -1,0 +1,64 @@
+############################# CHARGER LES PACKAGES #############################
+#install.packages("readr")
+#install.packages("dplyr")
+#install.packages("readxl")
+#install.packages("ggplot2")
+#install.packages("forcats")
+#install.packages("lubridate")
+#install.packages("shinythemes")
+#install.packages("plotly")
+
+library(readr) 
+library(dplyr)
+library(ggplot2)
+library(forcats)
+library(lubridate)
+library(shiny)
+library(shinythemes)
+library(plotly)
+
+################################ IMPORTATION ###################################
+
+data_enquete <- read_csv2("data/enquete_data_raw.csv")
+
+################################  FONCTIONS  ###################################
+#%>%
+data_enquete_filtree  <-  filter(data_enquete, A2_statut == "En recherche d'emploi") 
+  
+
+#unique(data_enquete_filtree$A2_statut)
+
+A4 <- unique(data_enquete$A4_secteur)
+A4
+data_enquete_new <- unique(data_enquete$A4_secteur_autre)
+data_enquete_new
+
+
+
+################################################################################
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
