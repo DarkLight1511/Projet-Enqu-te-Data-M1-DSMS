@@ -1,6 +1,5 @@
-# Define UI for application
 fluidPage(
-  theme = shinytheme("darkly"),
+  theme = shinytheme("cerulean"),
   themeSelector(),
   
   # Insertion d'image
@@ -8,7 +7,7 @@ fluidPage(
       height = "100x"),
   
   # Application title
-  titlePanel(""),
+  titlePanel("Résultats d'enquête"),
   
   # Page n°1
   navbarPage(
@@ -16,26 +15,18 @@ fluidPage(
     
     tabPanel("A4 - Secteurs d'activité",
              
-             # Sidebar with a slider input for number of bins
              sidebarLayout(
                sidebarPanel(
-                 #selectInput("")
-                 #sliderInput("")
-                 #actionButton("")
-                 #checkboxInput("")
-                 #radioButtons("")
-                 #dateInput("")
-                 #dateRangeInput("")
-                 #fileInput("")
-                 #downloadButton("")
-                 #actionButton("")
-                 #tabsetPanel("")
-                 #navbarpage("", tabPanel(...), tabPanel(...))
+                 actionButton("secteur1", "Secteurs principaux"),
+                 actionButton("secteur2", "Autres secteurs"), 
+                 actionButton("secteur3", "Tous les secteurs"), 
+                 hr(),
                ),
                
                mainPanel(tabsetPanel(
-                 tabPanel("Graphique", plotOutput("plot_evolution")),
-                 tabPanel("Tableau", tableOutput("table_evolution"))
+                 tabPanel("Graphique", plotOutput("plot_A4")),
+                 tabPanel("Camembert", plotOutput("plot_pie_A4")),
+                 tabPanel("Tableau", tableOutput("table_A4"))
                ))
              )),
     
