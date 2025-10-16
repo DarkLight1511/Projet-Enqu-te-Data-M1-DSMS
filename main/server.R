@@ -52,7 +52,6 @@ function(input, output, session) {
                 vjust = -0.5) +
       labs(
         title = "Répartition des secteurs d'activités",
-        subtitle = "Principaux secteurs",
         x = "Secteurs",
         y = "Réponses"
       ) +
@@ -63,7 +62,7 @@ function(input, output, session) {
   })
   
   output$plot_pie_A4 <- renderPlot({
-    if (is.null(A4_react$data)) return()
+    if (is.null(A4_react)) return()
     temp <- perimetre_A4()
     pie(temp$n, 
         labels = paste0(temp$Secteur, " (", temp$n, ")"),
@@ -80,4 +79,39 @@ function(input, output, session) {
   })
 ################################################################################ 
   
+  
+  
+####################################   A4   ####################################  
+  
+  
+  # Commandes pour les sorties
+  perimetre_A6 <- reactive({
+    temp <- data_enquete_A6 %>%
+      filter(!is.na(A6_experience)) %>%
+      count(A6_experience) %>%
+      arrange(A6_experience) %>% 
+      mutate(A6_experience = as_factor(A6_experience)) %>% 
+      dplyr::rename("Experience"= "A6_experience")
+    return(temp)
+  })  
+  
+  output$plot_A6 <- renderPlot({
+    perimetre_A6()  %>% 
+      ggplot() +
+      geom_col(aes(x = Experience, y = n, fill = n),
+               alpha = 0.7) +
+      geom_text(aes(x = Experience, y = n, label = n),
+                hjust = 0.5,
+                vjust = -0.5) +
+      labs(
+        title = "Répartition des secteurs d'activités",
+        x = "Années d'expérience",
+        y = "Réponses"
+      ) +
+      theme_minimal()
+  })
+  
+  output$table_A6 <- renderTable({
+    perimetre_A6() 
+  })
 }

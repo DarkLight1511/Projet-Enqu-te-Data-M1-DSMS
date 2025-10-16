@@ -109,6 +109,16 @@ data_enquete_A4_fusion <- A4_allinone(data_enquete_A4)
 ################################################################################
 
 
+################################ Question A6 ###################################
+A6 <- function(origin){
+  new <- origin %>% 
+    select(id, date, A6_experience) %>% 
+    arrange(id)
+}
+data_enquete_A6 <- A6(data_enquete_base)
+
+#View(data_enquete_A6)
+################################################################################
 
 
 
