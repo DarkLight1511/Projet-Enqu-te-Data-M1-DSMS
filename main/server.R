@@ -25,6 +25,15 @@ function(input, output, session) {
       mutate(A4_secteur_autre = as_factor(A4_secteur_autre)) %>% 
       dplyr::rename("Secteur"= "A4_secteur_autre")
   })
+  # Commande reliant le bouton "Tous les secteurs"  
+  observeEvent(input$secteur3, {
+    A4_react$data <- data_enquete_A4_fusion %>%
+      filter(!is.na(A4_secteur)) %>%
+      count(A4_secteur) %>%
+      arrange(desc(n)) %>% 
+      mutate(A4_secteur = as_factor(A4_secteur)) %>% 
+      dplyr::rename("Secteur"= "A4_secteur")
+  })
   
   # Commandes pour les sorties
   perimetre_A4 <- reactive({

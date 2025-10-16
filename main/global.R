@@ -19,13 +19,20 @@ library(plotly)
 library(stringr)
 library(RColorBrewer)
 
+
+
 ################################ IMPORTATION ###################################
 
 #data_enquete <- read_csv2("main/data/enquete_data_raw.csv")
 
 data_enquete <- read_csv2("data/enquete_data_raw.csv")
 
+
+
 ################################  FONCTIONS  ###################################
+
+
+############################## Données de base #################################
 
 ### Filtres sur les réponses attendues ###
 filtre <- function(origin){
@@ -62,7 +69,6 @@ rename <- function(origin){
       }
     }
   }
-  
   return(new)
 }
 
@@ -70,9 +76,10 @@ rename <- function(origin){
 #data_enquete_filtered <- filtre(data_enquete)
 data_enquete_base <- rename(filtre(data_enquete))
 #View(data_enquete_base)
+################################################################################
 
 
-### Question A4 ###
+################################ Question A4 ###################################
 A4 <- function(origin){
   new <- origin %>% 
     select(id, date, A4_secteur, A4_secteur_autre) %>% 
@@ -81,14 +88,24 @@ A4 <- function(origin){
 data_enquete_A4 <- A4(data_enquete_base)
 #View(data_enquete_A4)
 
-temp <- data_enquete_A4 %>%
-  filter(!is.na(A4_secteur_autre)) %>%
-  count(A4_secteur_autre) %>%
-  arrange(desc(n)) %>% 
-  mutate(A4_secteur_autre = as_factor(A4_secteur_autre)) %>% 
-  dplyr::rename("Secteur"= "A4_secteur_autre")
-View(temp)
+A4_allinone <- function(origin){
+  a <- 0
+  new <- origin
+  condition_fusion <- str_detect(origin$A4_secteur, "Autre")
+  for (i in condition_fusion){
+    a <- a+1
+    if (is.na(i)){
+    }else{
+      if(i){
+        new$A4_secteur[a] <-  new$A4_secteur_autre[a]
+      }
+    }
+  }
+  return(new)
+}
 
+data_enquete_A4_fusion <- A4_allinone(data_enquete_A4)
+#View(data_enquete_A4_fusion)
 ################################################################################
 
 
