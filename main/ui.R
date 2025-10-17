@@ -24,6 +24,12 @@ fluidPage(
                  actionButton("secteur2", "Autres secteurs"), 
                  actionButton("secteur3", "Tous les secteurs"), 
                  hr(),
+                 selectInput("Choix_poste", "Choix du poste occupé: ",
+                             choices = c("Tous les postes", 
+                                         unique(data_enquete_base$A3_poste))),
+                 radioButtons("Choix_genre", " Choix du genre", 
+                              choices = c("Tous","Homme","Femme"),
+                              selected = "Tous", inline = TRUE),
                ),
                
                mainPanel(tabsetPanel(

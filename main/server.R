@@ -4,21 +4,43 @@ function(input, output, session) {
   
 
   # Variable pour ranger la data selon le choix de l'utilisateur
+  choix_A4 <- reactive({
+    temp <- data_enquete_A4
+    # Filtre sur le poste
+    if (input$Choix_poste == "Tous les postes") {
+      temp <- temp
+    } else {
+      temp <- temp %>% filter(A3_poste == input$Choix_poste)
+    }
+    # Filtre sur le genre
+    if (input$Choix_genre == "Tous") {
+      temp <- temp
+    } else {
+      if (input$Choix_genre == "Homme") {
+        temp <- temp%>% filter(Y1A_genre == "Un homme")
+      }
+      if (input$Choix_genre == "Femme") {
+        temp <- temp%>% filter(Y1A_genre == "Une femme")
+      }
+    }
+    return(temp)
+  })
+  
   A4_react <- reactiveValues(data = NULL)
-
+  couleur_A4 <- brewer.pal(12, "Set3") 
     
   # Commande reliant le bouton "Secteurs principaux"  
   observeEvent(input$secteur1, {
-    A4_react$data <- data_enquete_A4 %>%
+    A4_react$data <- choix_A4() %>%
       filter(!is.na(A4_secteur)) %>%
       count(A4_secteur) %>%
       arrange(desc(n)) %>% 
       mutate(A4_secteur = as_factor(A4_secteur)) %>% 
       dplyr::rename("Secteur"= "A4_secteur")
   })
-  # Commande reliant le bouton "Secteurs principaux"  
+  # Commande reliant le bouton "Autres secteurs"  
   observeEvent(input$secteur2, {
-    A4_react$data <- data_enquete_A4 %>%
+    A4_react$data <- choix_A4() %>%
       filter(!is.na(A4_secteur_autre)) %>%
       count(A4_secteur_autre) %>%
       arrange(desc(n)) %>% 
@@ -35,12 +57,14 @@ function(input, output, session) {
       dplyr::rename("Secteur"= "A4_secteur")
   })
   
+  
   # Commandes pour les sorties
-  perimetre_A4 <- reactive({
+  
+    perimetre_A4 <- reactive({
     temp <- A4_react$data
     return(temp)
   })
-  
+
   output$plot_A4 <- renderPlot({
     if (is.null(A4_react$data)) return()
     perimetre_A4()  %>% 
@@ -62,7 +86,7 @@ function(input, output, session) {
   })
   
   output$plot_pie_A4 <- renderPlot({
-    if (is.null(A4_react)) return()
+    if (is.null(A4_react$data)) return()
     temp <- perimetre_A4()
     pie(temp$n, 
         labels = paste0(temp$Secteur, " (", temp$n, ")"),
@@ -81,7 +105,7 @@ function(input, output, session) {
   
   
   
-####################################   A4   ####################################  
+####################################   A6   ####################################  
   
   
   # Commandes pour les sorties

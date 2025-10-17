@@ -53,7 +53,7 @@ rename <- function(origin){
     if (is.na(i)){
     }else{
       if(i){
-        new$A3_poste[a] <- "Data Analyst"
+        new$A3_poste[a] <- "Data Analyst / analyste"
       }
     }
   }
@@ -80,12 +80,7 @@ data_enquete_base <- rename(filtre(data_enquete))
 
 
 ################################ Question A4 ###################################
-A4 <- function(origin){
-  new <- origin %>% 
-    select(id, date, A4_secteur, A4_secteur_autre) %>% 
-    arrange(id)
-}
-data_enquete_A4 <- A4(data_enquete_base)
+data_enquete_A4 <- data_enquete_base
 #View(data_enquete_A4)
 
 A4_allinone <- function(origin){
