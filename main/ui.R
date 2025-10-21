@@ -24,10 +24,10 @@ fluidPage(
                  actionButton("secteur2", "Autres secteurs"), 
                  actionButton("secteur3", "Tous les secteurs"), 
                  hr(),
-                 selectInput("Choix_poste", "Choix du poste occupé: ",
+                 selectInput("Choix_poste_A4", "Choix du poste occupé: ",
                              choices = c("Tous les postes", 
                                          unique(data_enquete_base$A3_poste))),
-                 radioButtons("Choix_genre", " Choix du genre", 
+                 radioButtons("Choix_genre_A4", " Choix du genre", 
                               choices = c("Tous","Homme","Femme"),
                               selected = "Tous", inline = TRUE),
                ),
@@ -49,6 +49,12 @@ tabPanel("A6 - Années d'expérience",
            sidebarPanel(
              # Titre de la question A6
              h3("Combien d’années d’expérience avez-vous en data ?"),
+             selectInput("Choix_poste_A6", "Choix du poste occupé: ",
+                         choices = c("Tous les postes", 
+                                     unique(data_enquete_base$A3_poste))),
+             radioButtons("Choix_genre_A6", " Choix du genre", 
+                          choices = c("Tous","Homme","Femme"),
+                          selected = "Tous", inline = TRUE),
            ),
            
            mainPanel(tabsetPanel(

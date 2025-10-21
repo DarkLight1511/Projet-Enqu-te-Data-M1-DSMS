@@ -7,19 +7,41 @@ function(input, output, session) {
   choix_A4 <- reactive({
     temp <- data_enquete_A4
     # Filtre sur le poste
-    if (input$Choix_poste == "Tous les postes") {
+    if (input$Choix_poste_A4 == "Tous les postes") {
       temp <- temp
     } else {
-      temp <- temp %>% filter(A3_poste == input$Choix_poste)
+      temp <- temp %>% filter(A3_poste == input$Choix_poste_A4)
     }
     # Filtre sur le genre
-    if (input$Choix_genre == "Tous") {
+    if (input$Choix_genre_A4 == "Tous") {
       temp <- temp
     } else {
-      if (input$Choix_genre == "Homme") {
+      if (input$Choix_genre_A4 == "Homme") {
         temp <- temp%>% filter(Y1A_genre == "Un homme")
       }
-      if (input$Choix_genre == "Femme") {
+      if (input$Choix_genre_A4 == "Femme") {
+        temp <- temp%>% filter(Y1A_genre == "Une femme")
+      }
+    }
+    return(temp)
+  })
+  
+  choix_A4_fusion <- reactive({
+    temp <- data_enquete_A4_fusion
+    # Filtre sur le poste
+    if (input$Choix_poste_A4 == "Tous les postes") {
+      temp <- temp
+    } else {
+      temp <- temp %>% filter(A3_poste == input$Choix_poste_A4)
+    }
+    # Filtre sur le genre
+    if (input$Choix_genre_A4 == "Tous") {
+      temp <- temp
+    } else {
+      if (input$Choix_genre_A4 == "Homme") {
+        temp <- temp%>% filter(Y1A_genre == "Un homme")
+      }
+      if (input$Choix_genre_A4 == "Femme") {
         temp <- temp%>% filter(Y1A_genre == "Une femme")
       }
     }
@@ -29,17 +51,8 @@ function(input, output, session) {
   A4_react <- reactiveValues(data = NULL)
   couleur_A4 <- brewer.pal(12, "Set3") 
     
-  # Commande reliant le bouton "Secteurs principaux"  
-  observeEvent(input$secteur1, {
-    A4_react$data <- choix_A4() %>%
-      filter(!is.na(A4_secteur)) %>%
-      count(A4_secteur) %>%
-      arrange(desc(n)) %>% 
-      mutate(A4_secteur = as_factor(A4_secteur)) %>% 
-      dplyr::rename("Secteur"= "A4_secteur")
-  })
   # Commande reliant le bouton "Autres secteurs"  
-  observeEvent(input$secteur2, {
+  observeEvent(list(input$secteur2, input$Choix_poste_A4, input$Choix_genre_A4), {
     A4_react$data <- choix_A4() %>%
       filter(!is.na(A4_secteur_autre)) %>%
       count(A4_secteur_autre) %>%
@@ -48,8 +61,17 @@ function(input, output, session) {
       dplyr::rename("Secteur"= "A4_secteur_autre")
   })
   # Commande reliant le bouton "Tous les secteurs"  
-  observeEvent(input$secteur3, {
-    A4_react$data <- data_enquete_A4_fusion %>%
+  observeEvent(list(input$secteur3, input$Choix_poste_A4, input$Choix_genre_A4), {
+    A4_react$data <- choix_A4_fusion() %>%
+      filter(!is.na(A4_secteur)) %>%
+      count(A4_secteur) %>%
+      arrange(desc(n)) %>% 
+      mutate(A4_secteur = as_factor(A4_secteur)) %>% 
+      dplyr::rename("Secteur"= "A4_secteur")
+  })  
+  # Commande reliant le bouton "Secteurs principaux"  
+  observeEvent(list(input$secteur1, input$Choix_poste_A4, input$Choix_genre_A4), {
+    A4_react$data <- choix_A4() %>%
       filter(!is.na(A4_secteur)) %>%
       count(A4_secteur) %>%
       arrange(desc(n)) %>% 
@@ -107,21 +129,40 @@ function(input, output, session) {
   
 ####################################   A6   ####################################  
   
-  
-  # Commandes pour les sorties
-  perimetre_A6 <- reactive({
-    temp <- data_enquete_A6 %>%
-      filter(!is.na(A6_experience)) %>%
-      count(A6_experience) %>%
-      arrange(A6_experience) %>% 
-      mutate(A6_experience = as_factor(A6_experience)) %>% 
-      dplyr::rename("Experience"= "A6_experience")
-    return(temp)
-  })  
+  choix_A6 <- eventReactive(
+    list(input$Choix_poste_A6, input$Choix_genre_A6),
+    {
+      temp <- data_enquete_A6
+      
+      # Filtre sur le poste
+      if (input$Choix_poste_A6 == "Tous les postes") {
+        temp <- temp
+      } else {
+        temp <- temp %>% filter(A3_poste == input$Choix_poste_A6)
+      }
+      # Filtre sur le genre
+      if (input$Choix_genre_A6 == "Tous") {
+        temp <- temp
+      } else {
+        if (input$Choix_genre_A6 == "Homme") {
+          temp <- temp%>% filter(Y1A_genre == "Un homme")
+        }
+        if (input$Choix_genre_A6 == "Femme") {
+          temp <- temp%>% filter(Y1A_genre == "Une femme")
+        }
+      }
+      
+      temp %>%
+        filter(!is.na(A6_experience)) %>%
+        count(A6_experience) %>%
+        arrange(desc(A6_experience)) %>%
+        mutate(A6_experience = as_factor(A6_experience)) %>%
+        dplyr::rename("Experience" = "A6_experience")
+    }
+  )
   
   output$plot_A6 <- renderPlot({
-    perimetre_A6()  %>% 
-      ggplot() +
+      ggplot(choix_A6()) +
       geom_col(aes(x = Experience, y = n, fill = n),
                alpha = 0.7) +
       geom_text(aes(x = Experience, y = n, label = n),
@@ -136,6 +177,6 @@ function(input, output, session) {
   })
   
   output$table_A6 <- renderTable({
-    perimetre_A6() 
+    choix_A6() 
   })
 }
