@@ -77,7 +77,7 @@ fluidPage(
     # Panel de gauche
     column(
       width = 4,
-      style = "min-width: 400px; max-width: 450px;",  # simulateur de "3.5"
+      style = "min-width: 300px; max-width: 450px;",
       wellPanel(
         h3("B1 - Connaissez-vous ces différents outils ?"),
 
@@ -125,8 +125,10 @@ fluidPage(
       width = 5,
       wellPanel(
         tabsetPanel(
-          tabPanel("Graphique", plotOutput("plot_B2")),
-          tabPanel("Tableau", tableOutput("table_B2"))
+          tabPanel("B1", plotOutput("plot_B1")),
+          tabPanel("B2", plotOutput("plot_B2")),
+          tabPanel("TableB1", tableOutput("table_B1")),
+          tabPanel("TableB2", tableOutput("table_B2")),
         )
       )
     ),
@@ -150,7 +152,7 @@ fluidPage(
   
 ############## Bouton pour afficher/masquer la sélection de thème ############## 
   absolutePanel(
-    bottom = 10, left = 10,  
+    up = 10, left = 10,  
     width = 250,             
     draggable = FALSE,       
     

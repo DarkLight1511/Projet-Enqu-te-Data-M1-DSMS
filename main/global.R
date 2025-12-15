@@ -7,9 +7,12 @@
 #install.packages("lubridate")
 #install.packages("shinythemes")
 #install.packages("plotly")
+#install.packages("tidyverse")
 
 library(readr) 
 library(dplyr)
+library(tidyr)
+library(tidyverse)
 library(ggplot2)
 library(forcats)
 library(lubridate)
@@ -104,6 +107,7 @@ data_enquete_A4_fusion <- A4_allinone(data_enquete_A4)
 ################################################################################
 
 
+
 ################################ Question A6 ###################################
 
 data_enquete_A6 <- data_enquete_base
@@ -113,12 +117,25 @@ data_enquete_A6 <- data_enquete_base
 
 
 
+################################ Questions B ###################################
+
+data_enquete_B <- data_enquete_base
+
+#View(data_enquete_A6)
+################################################################################
 
 
 
+#################################### TEST ######################################
 
+# col_name <- "score"
+# df <- tibble(nom = letters[1:3], valeur = 1:3)
+# df <- df %>%
+#   mutate(!!col_name := valeur * 2) %>% 
+#   mutate(col_name = valeur * 2)
+  
 
-
+unique(data_enquete_base$B2_frequence_utilisation_r)
 
 
 

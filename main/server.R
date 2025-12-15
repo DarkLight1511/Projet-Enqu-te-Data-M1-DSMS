@@ -1,8 +1,8 @@
 function(input, output, session) {
   
-####################################   A4   ####################################
+  ####################################   A4   ####################################
   
-
+  
   # Variable pour ranger la data selon le choix de l'utilisateur
   choix_A4 <- reactive({
     temp <- data_enquete_A4
@@ -50,7 +50,7 @@ function(input, output, session) {
   
   A4_react <- reactiveValues(data = NULL)
   couleur_A4 <- brewer.pal(12, "Set3") 
-    
+  
   # Commande reliant le bouton "Autres secteurs"  
   observeEvent(list(input$secteur2, input$Choix_poste_A4, input$Choix_genre_A4), {
     A4_react$data <- choix_A4() %>%
@@ -82,11 +82,11 @@ function(input, output, session) {
   
   # Commandes pour les sorties
   
-    perimetre_A4 <- reactive({
+  perimetre_A4 <- reactive({
     temp <- A4_react$data
     return(temp)
   })
-
+  
   output$plot_A4 <- renderPlot({
     if (is.null(A4_react$data)) return()
     perimetre_A4()  %>% 
@@ -129,7 +129,7 @@ function(input, output, session) {
   
 ####################################   A6   ####################################  
   
-  choix_A6 <- eventReactive(
+choix_A6 <- eventReactive(
     list(input$Choix_poste_A6, input$Choix_genre_A6),
     {
       temp <- data_enquete_A6
@@ -162,7 +162,7 @@ function(input, output, session) {
   )
   
   output$plot_A6 <- renderPlot({
-      ggplot(choix_A6()) +
+    ggplot(choix_A6()) +
       geom_col(aes(x = Experience, y = n, fill = n),
                alpha = 0.7) +
       geom_text(aes(x = Experience, y = n, label = n),
@@ -179,12 +179,179 @@ function(input, output, session) {
   output$table_A6 <- renderTable({
     choix_A6() 
   })
+################################################################################ 
+  
+  
+  
+####################################   B   #####################################
+  # ============================================================
+  #  B - Outils en data : B1 (connaissance) et B2 (fréquence)
+  # ============================================================
+  
+  # Mettre tous les noms de colonnes en minuscules
+  names(data_enquete_B) <- tolower(names(data_enquete_B))
+  
+  # --- Palettes de couleurs ---
+  couleur_B1 <- c("Oui" = "dodgerblue2", "Non" = "firebrick1")
+  couleur_B2 <- c(
+    "Jamais" = "firebrick1",
+    "Occasionnellement" = "orange",
+    "Régulièrement" = "darkgreen"
+  )
+  
+  # --- reactiveVal pour le dernier outil sélectionné ---
+  outil_reactif <- reactiveVal(NULL)
+  
+  # --- observeEvent pour chaque bouton ---
+  observeEvent(input$python, { outil_reactif("python") })
+  observeEvent(input$R, { outil_reactif("r") })
+  observeEvent(input$SAS, { outil_reactif("sas") })
+  observeEvent(input$PowerBI, { outil_reactif("powerbi") })
+  observeEvent(input$Tableau, { outil_reactif("tableau") })
+  observeEvent(input$qlik, { outil_reactif("qlik") })
+  observeEvent(input$Excel, { outil_reactif("excel") })
+  observeEvent(input$SQL, { outil_reactif("sql") })
+  observeEvent(input$Spark, { outil_reactif("spark") })
+  observeEvent(input$Spss, { outil_reactif("spss") })
+  observeEvent(input$java, { outil_reactif("c_java") })
+  observeEvent(input$datastudio, { outil_reactif("datastudio") })
+  observeEvent(input$Matlab, { outil_reactif("matlab") })
+  observeEvent(input$Aucun, { outil_reactif("aucun") })
+  
+  
+  # ============================================================
+  #                     QUESTION B1
+  # ============================================================
+  
+  choix_outil_B1 <- eventReactive(outil_reactif(), {
+    req(outil_reactif())
+    tool <- outil_reactif()
+    col_name <- paste0("b1_utilisation_", tolower(tool))
+    
+    temp <- data_enquete_B
+    
+    # --- Filtrage selon le poste ---
+    if (input$Choix_poste_B != "Tous les postes") {
+      temp <- temp %>% filter(a3_poste == input$Choix_poste_B)
+    }
+    
+    # --- Filtrage selon le genre ---
+    if (input$Choix_genre_B == "Homme") {
+      temp <- temp %>% filter(y1a_genre == "Un homme")
+    } else if (input$Choix_genre_B == "Femme") {
+      temp <- temp %>% filter(y1a_genre == "Une femme")
+    }
+    
+    # --- Nettoyage et comptage ---
+    temp <- temp %>%
+      mutate(
+        !!col_name := if_else(
+          .data[[col_name]] %in% c(NA, "N/A", "NA", "na", ""),
+          "Non",
+          .data[[col_name]]
+        ),
+        !!col_name := as.character(.data[[col_name]])
+      ) %>%
+      count(.data[[col_name]])
+    
+    names(temp) <- c("Réponse", "Effectif")
+    
+    list(data = temp, outil = tool)
+  })
+  
+  
+  # ============================================================
+  #                     QUESTION B2
+  # ============================================================
+  
+  choix_outil_B2 <- eventReactive(outil_reactif(), {
+    req(outil_reactif())
+    tool <- outil_reactif()
+    
+    col_B1 <- paste0("b1_utilisation_", tolower(tool))
+    col_B2 <- paste0("b2_frequence_utilisation_", tolower(tool))
+    
+    temp <- data_enquete_B
+    
+    # --- Filtrage selon le poste ---
+    if (input$Choix_poste_B != "Tous les postes") {
+      temp <- temp %>% filter(a3_poste == input$Choix_poste_B)
+    }
+    
+    # --- Filtrage selon le genre ---
+    if (input$Choix_genre_B == "Homme") {
+      temp <- temp %>% filter(y1a_genre == "Un homme")
+    } else if (input$Choix_genre_B == "Femme") {
+      temp <- temp %>% filter(y1a_genre == "Une femme")
+    }
+    
+    # --- Prendre uniquement ceux qui ont répondu "Oui" à B1 ---
+    temp <- temp %>%
+      filter(.data[[col_B1]] == "Oui")
+    
+    # --- Nettoyage et comptage des fréquences ---
+    temp <- temp %>%
+      mutate(
+        !!col_B2 := if_else(
+          .data[[col_B2]] %in% c(NA, "N/A", "NA", "na", ""),
+          "Jamais",
+          .data[[col_B2]]
+        ),
+        !!col_B2 := as.character(.data[[col_B2]])
+      ) %>%
+      count(.data[[col_B2]])
+    
+    names(temp) <- c("Fréquence", "Effectif")
+    
+    list(data = temp, outil = tool)
+  })
+  
+  
+  # ============================================================
+  #                     SORTIES
+  # ============================================================
+  
+  # --- B1 : Graphique ---
+  output$plot_B1 <- renderPlot({
+    req(choix_outil_B1())
+    temp <- choix_outil_B1()$data
+    tool <- choix_outil_B1()$outil
+    
+    temp$Réponse <- ifelse(temp$Réponse %in% c("Oui"), "Oui", "Non")
+    
+    pie(
+      temp$Effectif,
+      labels = paste0(temp$Réponse, " (", temp$Effectif, ")"),
+      border = "white",
+      col = couleur_B1[temp$Réponse],
+      main = paste("Connaissance de", tool)
+    )
+  })
+  
+  # --- B2 : Graphique ---
+  output$plot_B2 <- renderPlot({
+    req(choix_outil_B2())
+    temp <- choix_outil_B2()$data
+    tool <- choix_outil_B2()$outil
+    
+    pie(
+      temp$Effectif,
+      labels = paste0(temp$Fréquence, " (", temp$Effectif, ")"),
+      border = "white",
+      col = couleur_B2[temp$Fréquence],
+      main = paste("Fréquence d’utilisation de", tool)
+    )
+  })
+  
+  output$table_B1 <- renderTable({ req(choix_outil_B1()); choix_outil_B1()$data })
+  output$table_B2 <- renderTable({ req(choix_outil_B2()); choix_outil_B2()$data })
+  
+################################################################################   
+
+  
+  
 }
 ################################################################################ 
 
 
 
-####################################   B2   ####################################
-
-
-################################################################################ 
