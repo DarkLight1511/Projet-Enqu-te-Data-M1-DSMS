@@ -127,6 +127,99 @@ function(input, output, session) {
   
   
   
+####################################   A5   ####################################
+  
+  choix_A5 <- reactive({
+    temp <- data_enquete_A5
+    
+    # Filtre sur le poste
+    if (input$Choix_poste_A5 != "Tous les postes") {
+      temp <- temp %>% filter(A3_poste == input$Choix_poste_A5)
+    }
+    
+    # Filtre sur le genre
+    if (input$Choix_genre_A5 != "Tous") {
+      if (input$Choix_genre_A5 == "Homme") {
+        temp <- temp %>% filter(Y1A_genre == "Un homme")
+      }
+      if (input$Choix_genre_A5 == "Femme") {
+        temp <- temp %>% filter(Y1A_genre == "Une femme")
+      }
+    }
+    
+    return(temp)
+  })
+  
+  
+  A5_react <- reactiveValues(data = NULL)
+  couleur_A5 <- brewer.pal(5, "Set2")
+  
+  
+  observeEvent(
+    list(input$Choix_poste_A5, input$Choix_genre_A5),
+    {
+      A5_react$data <- choix_A5() %>%
+        filter(!is.na(A5_teletravail)) %>%
+        count(A5_teletravail) %>%
+        arrange(desc(n)) %>%
+        mutate(A5_teletravail = as_factor(A5_teletravail)) %>%
+        dplyr::rename("Fréquence" = "A5_teletravail")
+    }
+  )
+  
+  
+  perimetre_A5 <- reactive({
+    A5_react$data
+  })
+  
+  
+  output$plot_A5 <- renderPlot({
+    if (is.null(A5_react$data)) return()
+    
+    perimetre_A5() %>%
+      ggplot() +
+      geom_col(aes(x = Fréquence, y = n, fill = Fréquence),
+               alpha = 0.7) +
+      geom_text(aes(x = Fréquence, y = n, label = n),
+                vjust = -0.5) +
+      labs(
+        title = "Fréquence de télétravail",
+        x = "Fréquence",
+        y = "Réponses"
+      ) +
+      theme_minimal() +
+      theme(
+        axis.text.x = element_blank()    
+      )
+  })
+  
+  
+  output$plot_pie_A5 <- renderPlot({
+    if (is.null(A5_react$data)) return()
+    
+    temp <- perimetre_A5()
+    pie(
+      temp$n,
+      labels = paste0(temp$Fréquence, " (", temp$n, ")"),
+      col = couleur_A5,
+      border = "white",
+      main = "Fréquence de télétravail"
+    )
+  })
+  
+  
+  output$table_A5 <- renderTable({
+    if (is.null(A5_react$data)) return()
+    
+    perimetre_A5() %>%
+      dplyr::rename("Fréquence de télétravail" = "Fréquence") %>%
+      dplyr::rename("Effectif" = "n")
+  })
+  
+  
+################################################################################   
+  
+  
 ####################################   A6   ####################################  
   
 choix_A6 <- eventReactive(

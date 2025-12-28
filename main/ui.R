@@ -41,7 +41,42 @@ fluidPage(
              )),
 ################################################################################ 
     
-    tabPanel("A5", "C'est moi qui ai fait ça!!"),
+
+###################################### A5 ######################################   
+
+tabPanel(
+  "A5 - Télétravail",
+  
+  sidebarLayout(
+    sidebarPanel(
+      h3("À quelle fréquence télétravaillez-vous ?"),
+      
+      selectInput(
+        "Choix_poste_A5",
+        "Choix du poste occupé :",
+        choices = c("Tous les postes", unique(data_enquete_base$A3_poste))
+      ),
+      
+      radioButtons(
+        "Choix_genre_A5",
+        "Choix du genre",
+        choices = c("Tous", "Homme", "Femme"),
+        selected = "Tous",
+        inline = TRUE
+      )
+    ),
+    
+    mainPanel(
+      tabsetPanel(
+        tabPanel("Graphique", plotOutput("plot_A5")),
+        tabPanel("Camembert", plotOutput("plot_pie_A5")),
+        tabPanel("Tableau", tableOutput("table_A5"))
+      )
+    )
+  )
+),
+################################################################################
+
     
 ###################################### A6 ######################################
 

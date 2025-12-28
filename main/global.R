@@ -78,6 +78,10 @@ rename <- function(origin){
 #data_enquete_renamed <- rename(data_enquete)
 #data_enquete_filtered <- filtre(data_enquete)
 data_enquete_base <- rename(filtre(data_enquete))
+data_enquete_base <- data_enquete_base %>%
+  dplyr::rename("A5_teletravail" = "A5_teleravail")
+
+
 #View(data_enquete_base)
 ################################################################################
 
@@ -106,6 +110,12 @@ data_enquete_A4_fusion <- A4_allinone(data_enquete_A4)
 #View(data_enquete_A4_fusion)
 ################################################################################
 
+
+
+################################ Question A5 ###################################
+data_enquete_A5 <- data_enquete_base
+#View(data_enquete_A5)
+################################################################################
 
 
 ################################ Question A6 ###################################
