@@ -262,7 +262,7 @@ choix_A6 <- eventReactive(
                 hjust = 0.5,
                 vjust = -0.5) +
       labs(
-        title = "Répartition des secteurs d'activités",
+        title = "Années d'expérience",
         x = "Années d'expérience",
         y = "Réponses"
       ) +
